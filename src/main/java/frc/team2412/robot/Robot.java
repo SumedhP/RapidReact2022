@@ -94,9 +94,9 @@ public class Robot extends TimedRobot implements Loggable {
         hardware = new Hardware();
         subsystems = new Subsystems(hardware);
         controls = new Controls(subsystems);
-        updateManager = new UpdateManager(
-                subsystems.drivebaseSubsystem);
-        updateManager.startLoop(5.0e-3);
+        //updateManager = new UpdateManager(
+        //        subsystems.drivebaseSubsystem);
+        //updateManager.startLoop(5.0e-3);
 
         // Create and push Field2d to SmartDashboard.
         SmartDashboard.putData(field);
@@ -167,10 +167,10 @@ public class Robot extends TimedRobot implements Loggable {
 
         subsystems.drivebaseSubsystem.resetPose(RigidTransform2.ZERO);
 
-        autonomousChooser.getCommand().schedule();
         if (SubsystemConstants.SHOOTER_ENABLED) {
             new ShooterResetEncodersCommand(subsystems.shooterSubsystem).schedule();
         }
+        autonomousChooser.getCommand().schedule();
     }
 
     @Override

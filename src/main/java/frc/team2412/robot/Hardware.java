@@ -34,6 +34,7 @@ public class Hardware {
                 DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR = 7, DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR = 10;
         public static final int DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR = 2, DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR = 5,
                 DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR = 8, DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR = 11;
+        // TODO set these back to what they should be
         public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_PORT = -1, DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT = -1,
                 DRIVETRAIN_BACK_LEFT_ENCODER_PORT = -1, DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = -1;
 
@@ -77,8 +78,8 @@ public class Hardware {
         public static final int FLYWHEEL_1 = 20, FLYWHEEL_2 = 21, TURRET = 22, HOOD = 23;
 
         // intake can ids are range 30-39
-        public static final int INTAKE_INNER_MOTOR = 32, INTAKE_OUTER_MOTOR = 34, INTAKE_SOLENOID_UP = 14,
-                INTAKE_SOLENOID_DOWN = 15;
+        public static final int INTAKE_INNER_MOTOR = 30, INTAKE_OUTER_MOTOR = 31, INTAKE_SOLENOID_UP = 32,
+                INTAKE_SOLENOID_DOWN = 33;
 
         // index can ids are range 40-49
         public static final int INDEX_INGEST_MOTOR = 40, INDEX_FEEDER_MOTOR = 41, INDEX_INGEST_SENSOR = 4,

@@ -12,6 +12,7 @@ import frc.team2412.robot.commands.autonomous.Follow2910TrajectoryCommand;
 import frc.team2412.robot.commands.climb.ClimbTestCommand;
 import frc.team2412.robot.commands.index.IndexTestCommand;
 import frc.team2412.robot.commands.intake.IntakeTestCommand;
+import frc.team2412.robot.commands.shooter.ShooterAimTestCommand;
 
 public class AutonomousChooser {
 
@@ -26,7 +27,7 @@ public class AutonomousChooser {
         autonomousModeChooser.setDefaultOption(AutonomousMode.SQUARE_PATH.uiName, AutonomousMode.SQUARE_PATH);
 
         for (var mode : AutonomousMode.values()) {
-            if (mode != AutonomousMode.SQUARE_PATH) {
+            if (mode != AutonomousMode.SQUARE_PATH && mode.modeEnabled) {
                 autonomousModeChooser.addOption(mode.uiName, mode);
             }
         }
@@ -78,21 +79,23 @@ public class AutonomousChooser {
     public enum AutonomousMode {
         // Replace with individual testing commands
         // spotless:off
-        SQUARE_PATH((subsystems, trajectories) -> AutonomousChooser.getSquarePathAutoCommand(subsystems, trajectories), "Square Path"),
-        STAR_PATH((subsystems, trajectories) -> AutonomousChooser.getStarPathAutoCommand(subsystems, trajectories), "Star Path"),
-        WPI_PATH((subsystems, trajectories) -> AutonomousChooser.getAutoWPICommand(subsystems), "WPI Lib Path"),
-        CLIMB((subsystems, trajectories) -> new ClimbTestCommand(subsystems.climbSubsystem), "Climb test"),
-        INDEX((subsystems, trajectories) -> new IndexTestCommand(subsystems.indexSubsystem), "Index test"),
-        INTAKE((subsystems, trajectories) -> new IntakeTestCommand(subsystems.intakeSubsystem), "Intake test"),
-        SHOOTER((subsystems, trajectories) -> new ClimbTestCommand(subsystems.climbSubsystem), "Shooter test");
+        SQUARE_PATH((subsystems, trajectories) -> AutonomousChooser.getSquarePathAutoCommand(subsystems, trajectories), "Square Path", Subsystems.SubsystemConstants.DRIVE_ENABLED),
+        STAR_PATH((subsystems, trajectories) -> AutonomousChooser.getStarPathAutoCommand(subsystems, trajectories), "Star Path", Subsystems.SubsystemConstants.DRIVE_ENABLED),
+        WPI_PATH((subsystems, trajectories) -> AutonomousChooser.getAutoWPICommand(subsystems), "WPI Lib Path", Subsystems.SubsystemConstants.DRIVE_ENABLED),
+        CLIMB((subsystems, trajectories) -> new ClimbTestCommand(subsystems.climbSubsystem), "Climb test", Subsystems.SubsystemConstants.CLIMB_ENABLED),
+        INDEX((subsystems, trajectories) -> new IndexTestCommand(subsystems.indexSubsystem), "Index test", Subsystems.SubsystemConstants.INDEX_ENABLED),
+        INTAKE((subsystems, trajectories) -> new IntakeTestCommand(subsystems.intakeSubsystem), "Intake test", Subsystems.SubsystemConstants.INTAKE_ENABLED),
+        SHOOTER((subsystems, trajectories) -> new ShooterAimTestCommand(subsystems.shooterSubsystem), "Shooter test", Subsystems.SubsystemConstants.SHOOTER_ENABLED);
         // spotless:on
 
         public final CommandSupplier commandSupplier;
         public final String uiName;
+        public final boolean modeEnabled;
 
-        private AutonomousMode(CommandSupplier commandSupplier, String uiName) {
+        private AutonomousMode(CommandSupplier commandSupplier, String uiName, boolean modeEnabled) {
             this.commandSupplier = commandSupplier;
             this.uiName = uiName;
+            this.modeEnabled = modeEnabled;
         }
     }
 }
