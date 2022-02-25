@@ -30,7 +30,7 @@ public class IndexSubsystem extends SubsystemBase implements Loggable {
 
         // Index Motor Speeds
 
-        public static double INDEX_IN_SPEED = 0.5; // will change values later
+        public static double INDEX_IN_SPEED = 0.7; // will change values later
         public static double INDEX_OUT_SPEED = -0.5; // will also change later
 
         // Proximity Threshold

@@ -331,6 +331,8 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
         return Math.abs(getHoodAngle() - angle) < HOOD_ANGLE_TOLERANCE;
     }
 
+    @Log(name = "WHat Hood Set to ")
+    double set;
     /**
      * Sets the target angle for the hood motor
      *
@@ -338,7 +340,9 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
      *            Target angle for the hood motor in degrees.
      */
     public void setHoodAngle(double degrees) {
+        
         degrees = Math.min(Math.max(degrees, MIN_HOOD_ANGLE), MAX_HOOD_ANGLE);
+        set = degrees;
         hoodPID.setReference(degrees / HOOD_REVS_TO_DEGREES, CANSparkMax.ControlType.kPosition);
     }
 

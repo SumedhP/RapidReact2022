@@ -9,6 +9,7 @@ import frc.team2412.robot.subsystem.ShooterVisionSubsystem;
 
 public class FullShootCommand extends ParallelCommandGroup {
     public FullShootCommand(ShooterSubsystem shooter, ShooterVisionSubsystem vision, IntakeSubsystem intake, IndexSubsystem index) {
+        // addCommands(new ShooterAimTestCommand(shooter), new IntakeInCommand(index, intake));
         addCommands(new ShooterTargetCommand(shooter, vision), new IntakeInCommand(index, intake));
     }
-}
+    }

@@ -182,6 +182,7 @@ public class InterpolatingTreeMap extends TreeMap<Double, ShooterDataDistancePoi
             return null;
         }
         double angleSlope = (ceiling.getAngle() - floor.getAngle()) / slopeDistanceDifference;
+        System.out.println(angleSlope);
         double rpmSlope = (ceiling.getRPM() - floor.getRPM()) / slopeDistanceDifference;
         double distanceOffset = key - floor.getDistance();
         double interpolateAngle = angleSlope * distanceOffset + floor.getAngle();
