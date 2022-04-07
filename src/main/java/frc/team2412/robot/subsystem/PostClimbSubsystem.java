@@ -30,11 +30,11 @@ public class PostClimbSubsystem extends SubsystemBase implements Loggable {
     }
 
     public void armSolenoid() {
-        firingSolenoid.set(DoubleSolenoid.Value.kForward);
+        firingSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     public void disarmSolenoid() {
-        firingSolenoid.set(DoubleSolenoid.Value.kReverse);
+        firingSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
 }

@@ -113,8 +113,10 @@ public class Controls {
     }
 
     public void bindPostClimbControls() {
-        climbArmUp.and(climbArmDown).and(climbArmDownManual).and(climbArmUpManual)
+        driveController.getStartButton().and(driveController.getBackButton())
                 .whenActive(new PostClimbUpComamnd(subsystems.postClimbSubsystem));
+        // climbArmUp.and(climbArmDown).and(climbArmDownManual).and(climbArmUpManual)
+        // .whenActive(new PostClimbUpComamnd(subsystems.postClimbSubsystem));
     }
 
     public void bindDriveControls() {
