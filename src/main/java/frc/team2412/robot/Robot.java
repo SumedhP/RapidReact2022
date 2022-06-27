@@ -251,6 +251,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+
+        addPeriodic(() -> {
+            subsystems.wpiDriveSubsystem.drive(controls.driveController.getLeftXAxis().get(),
+                    controls.driveController.getLeftYAxis().get(), controls.driveController.getRightXAxis().get());
+        }, 0.005);
+
         Shuffleboard.startRecording();
         if (subsystems.intakeSubsystem != null) {
             subsystems.intakeSubsystem.intakeExtend();

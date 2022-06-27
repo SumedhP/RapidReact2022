@@ -2,8 +2,7 @@ package frc.team2412.robot.subsystem;
 
 import static frc.team2412.robot.Hardware.*;
 
-import org.frcteam2910.common.robot.drivers.PigeonTwo;
-
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -35,7 +34,7 @@ public class WpiDriveSubsystem extends SubsystemBase {
     );
 
     private final SwerveModule[] modules;
-    private final PigeonTwo gyro;
+    private final WPI_Pigeon2 gyro;
 
     private final SwerveDriveOdometry odometry;
 
@@ -44,7 +43,7 @@ public class WpiDriveSubsystem extends SubsystemBase {
                 FRONT_RIGHT_CONFIG.create(),
                 BACK_LEFT_CONFIG.create(),
                 BACK_RIGHT_CONFIG.create() };
-        gyro = new PigeonTwo(GYRO_PORT, DRIVETRAIN_INTAKE_CAN_BUS_NAME);
+        gyro = new WPI_Pigeon2(GYRO_PORT, DRIVETRAIN_INTAKE_CAN_BUS_NAME);
         odometry = new SwerveDriveOdometry(kinematics, getHeading());
     }
 
@@ -61,14 +60,14 @@ public class WpiDriveSubsystem extends SubsystemBase {
     }
 
     public void updateModules(SwerveModuleState[] moduleStates) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < moduleStates.length; i++) {
             modules[i].set(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());
         }
     }
 
     public SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] moduleStates = new SwerveModuleState[4];
-        for (int i = 0; i < 4; i++) {
+        SwerveModuleState[] moduleStates = new SwerveModuleState[modules.length];
+        for (int i = 0; i < modules.length; i++) {
             moduleStates[i] = new SwerveModuleState(modules[i].getDriveVelocity(),
                     new Rotation2d(modules[i].getSteerAngle()));
         }
@@ -76,11 +75,11 @@ public class WpiDriveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getHeading() {
-        return new Rotation2d(gyro.getAdjustmentAngle().toRadians());
+        return gyro.getRotation2d();
     }
 
     public void resetGyro() {
-        gyro.setAdjustmentAngle(gyro.getUnadjustedAngle());
+        gyro.reset();
     }
 
     public Pose2d getPose() {

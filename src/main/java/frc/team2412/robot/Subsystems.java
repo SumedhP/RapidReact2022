@@ -37,6 +37,8 @@ public class Subsystems implements Loggable {
 
     public PostClimbSubsystem postClimbSubsystem;
 
+    public WpiDriveSubsystem wpiDriveSubsystem;
+
     public Subsystems() {
         boolean comp = Robot.getInstance().isCompetition();
 
