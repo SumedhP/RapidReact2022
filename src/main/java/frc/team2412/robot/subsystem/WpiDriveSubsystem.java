@@ -1,6 +1,9 @@
 package frc.team2412.robot.subsystem;
 
 import static frc.team2412.robot.Hardware.*;
+import static frc.team2412.robot.subsystem.WpiDriveSubsystem.Constants.*;
+
+import java.util.Arrays;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -20,22 +23,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
-public class WpiDriveSubsystem extends SubsystemBase {
-
-    private static final double TRACKWIDTH = Units.inchesToMeters(22.5);
-    private static final double WHEELBASE = TRACKWIDTH;
-    private static final double maxVelocityMetersPerSecond = 1;
-
-    private static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-            new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // front left
-            new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // front right
-            new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // back left
-            new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // back right
-    );
+public class WpiDriveSubsystem extends SubsystemBase {   
 
     private final SwerveModule[] modules;
     private final WPI_Pigeon2 gyro;
-
     private final SwerveDriveOdometry odometry;
 
     public WpiDriveSubsystem() {
@@ -55,13 +46,12 @@ public class WpiDriveSubsystem extends SubsystemBase {
     public void drive(double xSpeed, double ySpeed, double rotationSpeed) {
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
         SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxVelocityMetersPerSecond);
         updateModules(swerveModuleStates);
     }
 
     public void updateModules(SwerveModuleState[] moduleStates) {
         for (int i = 0; i < moduleStates.length; i++) {
-            modules[i].set(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());
+            modules[i].set(moduleStates[i].speedMetersPerSecond / maxVelocityMetersPerSecond * 12, moduleStates[i].angle.getRadians());
         }
     }
 
@@ -91,7 +81,20 @@ public class WpiDriveSubsystem extends SubsystemBase {
     }
 
     public void resetPose() {
-        odometry.resetPosition(new Pose2d(), getHeading());
+        setPose(new Pose2d());
+    }
+
+    public static class Constants{
+        public static final double TRACKWIDTH = Units.inchesToMeters(22.5);
+        public static final double WHEELBASE = TRACKWIDTH;
+        public static final double maxVelocityMetersPerSecond = 1;
+    
+        public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+                new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // front left
+                new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // front right
+                new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // back left
+                new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // back right
+        );
     }
 
     public static class AutoUtil {
