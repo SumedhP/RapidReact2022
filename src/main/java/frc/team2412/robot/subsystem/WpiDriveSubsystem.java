@@ -3,8 +3,6 @@ package frc.team2412.robot.subsystem;
 import static frc.team2412.robot.Hardware.*;
 import static frc.team2412.robot.subsystem.WpiDriveSubsystem.Constants.*;
 
-import java.util.Arrays;
-
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -44,14 +42,15 @@ public class WpiDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double xSpeed, double ySpeed, double rotationSpeed) {
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
-        SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
-        updateModules(swerveModuleStates);
+        ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, getHeading());
+        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+        updateModules(moduleStates);
     }
 
     public void updateModules(SwerveModuleState[] moduleStates) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY_METERS_PER_SECOND);
         for (int i = 0; i < moduleStates.length; i++) {
-            modules[i].set(moduleStates[i].speedMetersPerSecond / maxVelocityMetersPerSecond * 12, moduleStates[i].angle.getRadians());
+            modules[i].set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * 12, moduleStates[i].angle.getRadians());
         }
     }
 
@@ -87,7 +86,7 @@ public class WpiDriveSubsystem extends SubsystemBase {
     public static class Constants{
         public static final double TRACKWIDTH = Units.inchesToMeters(22.5);
         public static final double WHEELBASE = TRACKWIDTH;
-        public static final double maxVelocityMetersPerSecond = 1;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 1;
     
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
                 new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // front left
