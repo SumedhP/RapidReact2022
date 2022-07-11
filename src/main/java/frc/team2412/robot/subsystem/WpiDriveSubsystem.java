@@ -1,27 +1,20 @@
 package frc.team2412.robot.subsystem;
 
+import static edu.wpi.first.math.kinematics.ChassisSpeeds.*;
 import static frc.team2412.robot.Hardware.*;
 import static frc.team2412.robot.subsystem.WpiDriveSubsystem.Constants.*;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.controller.*;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.*;
 
-public class WpiDriveSubsystem extends SubsystemBase {   
+public class WpiDriveSubsystem extends SubsystemBase {
 
     private final SwerveModule[] modules;
     private final WPI_Pigeon2 gyro;
@@ -42,7 +35,7 @@ public class WpiDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double xSpeed, double ySpeed, double rotationSpeed) {
-        ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, getHeading());
+        ChassisSpeeds chassisSpeeds = fromFieldRelativeSpeeds(xSpeed, ySpeed, rotationSpeed, getHeading());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
         updateModules(moduleStates);
     }
@@ -50,7 +43,8 @@ public class WpiDriveSubsystem extends SubsystemBase {
     public void updateModules(SwerveModuleState[] moduleStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY_METERS_PER_SECOND);
         for (int i = 0; i < moduleStates.length; i++) {
-            modules[i].set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * 12, moduleStates[i].angle.getRadians());
+            modules[i].set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * 12,
+                    moduleStates[i].angle.getRadians());
         }
     }
 
@@ -83,11 +77,11 @@ public class WpiDriveSubsystem extends SubsystemBase {
         setPose(new Pose2d());
     }
 
-    public static class Constants{
+    public static class Constants {
         public static final double TRACKWIDTH = Units.inchesToMeters(22.5);
         public static final double WHEELBASE = TRACKWIDTH;
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 1;
-    
+
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
                 new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // front left
                 new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // front right
