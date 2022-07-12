@@ -113,6 +113,15 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
     private double turretTestAngle;
     private double distanceBias = 10;
 
+
+    double ks = 0.735;
+
+    double kv = 0.1193;
+
+    double ks2 = 0.471;
+
+    SimpleMotorFeedforward flywheelFF2;
+
     /**
      * Constructor for shooter subsystem.
      */
@@ -124,7 +133,28 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
         this.hoodEncoder = hoodMotor.getEncoder();
         this.hoodPID = hoodMotor.getPIDController();
         configMotors();
-        flywheelFF = new SimpleMotorFeedforward(0.735, 0.1193, 0.0056666);
+        flywheelFF = new SimpleMotorFeedforward(ks, kv);
+        flywheelFF2 = new SimpleMotorFeedforward(ks2, kv);
+
+    }
+
+    @Override
+    public void periodic() {
+        double velocity = 2000 * FLYWHEEL_RPM_TO_VELOCITY;
+        double rps = velocity / 2048 * 10;
+        double feedForward = flywheelFF.calculate(rps) / 12 - FLYWHEEL_FEEDFORWARD_OFFSET;
+        double feedForward2 = flywheelFF2.calculate(rps) / 12;
+        double feedForward3 = flywheelFF.calculate(rps) / 12;
+
+        System.out.println("feedfoward w/o offset:" + feedForward3);
+        System.out.println("feedfoward w/ offset:" + feedForward);
+        System.out.println("feedfoward no offset:" + feedForward2);
+        System.out.println();
+        
+        if (shooterOverride) {
+            setFlywheelRPM(flywheelTestRPM);
+            setHoodAngle(hoodTestAngle);
+        }
     }
 
     /* FUNCTIONS */
@@ -183,14 +213,6 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
         hoodMotor.enableVoltageCompensation(BATTERY_VOLTAGE);
 
         resetHoodEncoder(true);
-    }
-
-    @Override
-    public void periodic() {
-        if (shooterOverride) {
-            setFlywheelRPM(flywheelTestRPM);
-            setHoodAngle(hoodTestAngle);
-        }
     }
 
     public void simInit(PhysicsSim sim) {
