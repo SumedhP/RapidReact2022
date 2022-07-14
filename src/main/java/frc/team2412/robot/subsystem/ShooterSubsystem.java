@@ -17,7 +17,12 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.*;
+import edu.wpi.first.math.controller.*;
+import edu.wpi.first.math.estimator.KalmanFilter;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.*;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team2412.robot.Robot;
@@ -113,14 +118,19 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
     private double turretTestAngle;
     private double distanceBias = 10;
 
-
     double ks = 0.735;
 
     double kv = 0.1193;
 
     double ks2 = 0.471;
+    double ka = 0.0056666;
 
     SimpleMotorFeedforward flywheelFF2;
+
+    LinearSystem<N1, N1, N1> flywheelPlant;
+    KalmanFilter<N1, N1, N1> flywheelObserver;
+    LinearQuadraticRegulator<N1, N1, N1> flywheelController;
+    LinearSystemLoop<N1, N1, N1> flywheelLoop;
 
     /**
      * Constructor for shooter subsystem.
@@ -135,7 +145,12 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
         configMotors();
         flywheelFF = new SimpleMotorFeedforward(ks, kv);
         flywheelFF2 = new SimpleMotorFeedforward(ks2, kv);
-
+        flywheelPlant = LinearSystemId.identifyVelocitySystem(kv, ka);
+        flywheelObserver = new KalmanFilter<>(Nat.N1(), Nat.N1(), flywheelPlant, VecBuilder.fill(3),
+                VecBuilder.fill(0.01), 0.02);
+        flywheelController = new LinearQuadraticRegulator<>(flywheelPlant, VecBuilder.fill(8), VecBuilder.fill(12),
+                0.02);
+        flywheelLoop = new LinearSystemLoop<>(flywheelPlant, flywheelController, flywheelObserver, 12, 0.020);
     }
 
     @Override
@@ -150,11 +165,13 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
         System.out.println("feedfoward w/ offset:" + feedForward);
         System.out.println("feedfoward no offset:" + feedForward2);
         System.out.println();
-        
+
         if (shooterOverride) {
             setFlywheelRPM(flywheelTestRPM);
             setHoodAngle(hoodTestAngle);
         }
+
+        flywheelLoop.getU();
     }
 
     /* FUNCTIONS */
@@ -341,7 +358,8 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
      * Sets the velocity of both flywheel motors
      *
      * @param velocity
-     *            The target velocity of the flywheel motors (in ticks per 100ms).
+     *            The target velocity of the flywheel motors (in ticks per
+     *            100ms).
      */
     public void setFlywheelVelocity(double velocity) {
         // flywheelMotor1.set(ControlMode.Velocity, velocity);
@@ -411,7 +429,8 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
      *
      * @param angle
      *            The angle (in degrees) to compare the hood's angle to.
-     * @return true if difference between hood angle and given angle is less than HOOD_ANGLE_TOLERANCE,
+     * @return true if difference between hood angle and given angle is less than
+     *         HOOD_ANGLE_TOLERANCE,
      *         false otherwise.
      */
     public boolean isHoodAtAngle(double angle) {
@@ -432,11 +451,13 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
     /**
      * Sets the turret's target angle to the given angle.
      *
-     * If angle is too far in one direction but can be reached by rotating in the other direction, the
+     * If angle is too far in one direction but can be reached by rotating in the
+     * other direction, the
      * turret will turn in that direction.
      *
      * @param angle
-     *            The angle (in degrees) to set the turret to (negative for counterclockwise).
+     *            The angle (in degrees) to set the turret to (negative for
+     *            counterclockwise).
      */
     public void setTurretAngle(double angle) {
 
@@ -451,7 +472,8 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable {
     }
 
     /**
-     * Sets the turret angle relative to the current position of the motor (not the last target angle).
+     * Sets the turret angle relative to the current position of the motor (not the
+     * last target angle).
      *
      * @param deltaAngle
      *            Amount to change the turret angle by (in degrees).
