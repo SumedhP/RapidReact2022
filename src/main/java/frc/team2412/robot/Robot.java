@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -32,10 +33,15 @@ import io.github.oblarg.oblog.Logger;
  * Turret logic separate
  * Indexing a state machine
  * autos using path planner
+ * 
+ * things i want happening more often
+ * DB update
+ * Index
+ * DB odometry
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimesliceRobot {
 
-    private final PowerDistribution PDP;
+    private PowerDistribution PDP;
     private PneumaticHub pneumaticHub;
 
     private static final double MIN_PRESSURE = 90;
@@ -44,7 +50,8 @@ public class Robot extends TimedRobot {
     public RobotContainer subsystems;
 
     public Robot() {
-        PDP = new PowerDistribution(Hardware.PDP_ID, ModuleType.kRev);
+        super(0.002, 0.005);
+        subsystems = new RobotContainer();
     }
 
     public double getVoltage() {
@@ -58,28 +65,26 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         LiveWindow.disableAllTelemetry();
-        LiveWindow.enableTelemetry(PDP);
 
-        subsystems = new RobotContainer();
-
+        PDP = new PowerDistribution(Hardware.PDP_ID, ModuleType.kRev);
         pneumaticHub = new PneumaticHub(PNEUMATIC_HUB);
         pneumaticHub.enableCompressorAnalog(MIN_PRESSURE, MAX_PRESSURE);
 
-    Shuffleboard.startRecording();
+        Shuffleboard.startRecording();
 
-    if(RobotBase.isReal()) {
-        DataLogManager.start();
-        DriverStation.startDataLog(DataLogManager.getLog(), true);
-    }
+        if (RobotBase.isReal()) {
+            DataLogManager.start();
+            DriverStation.startDataLog(DataLogManager.getLog(), true);
+        }
 
-    // Create and push Field2d to SmartDashboard.
-    SmartDashboard.putData(field);
+        // Create and push Field2d to SmartDashboard.
+        SmartDashboard.putData(field);
 
     }
 
     @Override
     public void testInit() {
-    
+
     }
 
     @Override
@@ -115,6 +120,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        
+
     }
 }
