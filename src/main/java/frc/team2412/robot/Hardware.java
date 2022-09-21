@@ -2,7 +2,6 @@ package frc.team2412.robot;
 
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 
-import frc.team2412.robot.sim.TalonFXSimProfile.TalonFXConstants;
 import frc.team2412.robot.util.Mk4Configuration;
 
 public class Hardware {
@@ -67,7 +66,7 @@ public class Hardware {
     public static final int GYRO_PORT = 62;
 
     // cameras
-    public static final String LIMELIGHT = "limelight", BACK_CAM = "back", FISH_CAM = "fish cam";
+    public static final String LIMELIGHT = "limelight";
 
     // shooter can ids are range 20-29
     public static final int FLYWHEEL_1 = 20, FLYWHEEL_2 = 21, TURRET = 22, HOOD = 23;
@@ -92,7 +91,4 @@ public class Hardware {
     public static final int PDP_ID = 1; // needs to be verified on the bot (Can be found in REV)
     public static final int PNEUMATIC_HUB = 60;
 
-    // Simulation stuff
-    // TODO Find more accurate values
-    public static final double SIM_FULL_VELOCITY = 6000 * TalonFXConstants.RPM_TO_VELOCITY;
 }
