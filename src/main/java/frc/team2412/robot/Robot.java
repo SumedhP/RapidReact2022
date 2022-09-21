@@ -109,39 +109,12 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void simulationInit() {
-
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        PhysicsSim.getInstance().run();
-    }
-
-    public RobotType getRobotType() {
-        return robotType;
-    }
-
-    public boolean isCompetition() {
-        return getRobotType() == RobotType.COMPETITION || getRobotType() == RobotType.AUTOMATED_TEST;
-    }
-
-    @Override
     public void disabledInit() {
         Shuffleboard.stopRecording();
-        if (subsystems.climbSubsystem != null) {
-            subsystems.climbSubsystem.stopArm(true);
-        }
-        if (subsystems.shooterSubsystem != null) {
-            subsystems.shooterSubsystem.stopHoodMotor();
-            subsystems.shooterSubsystem.stopFlywheel();
-        }
     }
 
     @Override
     public void disabledPeriodic() {
-        if (subsystems.drivebaseSubsystem != null) {
-            subsystems.drivebaseSubsystem.setToX();
-        }
+        
     }
 }

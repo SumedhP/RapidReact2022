@@ -19,13 +19,7 @@ public class Hardware {
     public static final String DRIVETRAIN_INTAKE_CAN_BUS_NAME = "DrivebaseIntake";
 
     // Changes swerve modules & disables subsystems missing from the swerve test bot
-    private static final Mk4SwerveModuleHelper.GearRatio GEAR_RATIO;
-
-    static {
-        GEAR_RATIO = Robot.getInstance().isCompetition()
-                ? Mk4SwerveModuleHelper.GearRatio.L2
-                : Mk4SwerveModuleHelper.GearRatio.L1;
-    }
+    private static final Mk4SwerveModuleHelper.GearRatio GEAR_RATIO =Mk4SwerveModuleHelper.GearRatio.L2;
 
     public static final Mk4Configuration FRONT_LEFT_CONFIG = new Mk4Configuration(
             GEAR_RATIO,
@@ -81,11 +75,6 @@ public class Hardware {
 
     // climb can ids are range 50-59
     public static final int CLIMB_FIXED_MOTOR = 51;
-    public static final int CLIMB_LIMIT_SWITCH = 9; // to be determined - digital I/O pins are 0-9
-
-    public static final int POST_CLIMB_BLOCKING_SOLENOID = 4;
-    public static final int POST_CLIMB_FIRING_SOLENOID_FIRE = 3;
-    public static final int POST_CLIMB_FIRING_SOLENOID_CLOSE = 2;
 
     // Other hardware
     public static final int PDP_ID = 1; // needs to be verified on the bot (Can be found in REV)
